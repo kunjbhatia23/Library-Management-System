@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
             </div>
             <div className="hidden sm:block">
               <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                LibraryMS
+                Library
               </span>
               <div className="text-xs text-gray-500 -mt-1">Management System</div>
             </div>
