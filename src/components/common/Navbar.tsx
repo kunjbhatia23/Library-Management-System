@@ -30,20 +30,20 @@ const Navbar: React.FC = () => {
     <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo/Brand */}
+          {/* Logo/Brand - Always visible */}
           <Link 
             to="/" 
-            className="flex items-center space-x-3 group"
+            className="flex items-center space-x-3 group flex-shrink-0"
             onClick={closeMobileMenu}
           >
             <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
-            <div className="hidden sm:block">
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Library
+            <div className="block">
+              <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Library Management System
               </span>
-              <div className="text-xs text-gray-500 -mt-1">Management System</div>
+              <div className="text-xs text-gray-500 -mt-1 hidden sm:block">Professional Library Solution</div>
             </div>
           </Link>
 
@@ -65,8 +65,8 @@ const Navbar: React.FC = () => {
             ))}
           </div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center space-x-3">
+          {/* Desktop Right Side Actions */}
+          <div className="hidden md:flex items-center space-x-3">
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
@@ -80,7 +80,7 @@ const Navbar: React.FC = () => {
               )}
             </button>
 
-            {/* Profile/Avatar */}
+            {/* Profile/Avatar with Dropdown */}
             <div className="relative group">
               <button className="flex items-center space-x-2 p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:scale-105">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-lg">
@@ -89,7 +89,7 @@ const Navbar: React.FC = () => {
                 <span className="hidden lg:block text-sm font-medium">Admin</span>
               </button>
               
-              {/* Profile Dropdown (placeholder) */}
+              {/* Desktop Profile Dropdown */}
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2">
                 <div className="p-2">
                   <a href="#" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
@@ -105,29 +105,30 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={toggleMobileMenu}
-              className="md:hidden p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-all duration-200"
-              aria-label="Toggle mobile menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={toggleMobileMenu}
+            className="md:hidden p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-all duration-200 flex-shrink-0"
+            aria-label="Toggle mobile menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
 
         {/* Mobile Navigation Menu */}
-        <div className={`md:hidden transition-all duration-300 ease-in-out ${
+        <div className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
           isMobileMenuOpen 
-            ? 'max-h-96 opacity-100 pb-4' 
-            : 'max-h-0 opacity-0 overflow-hidden'
+            ? 'max-h-screen opacity-100 pb-4' 
+            : 'max-h-0 opacity-0'
         }`}>
-          <div className="pt-4 space-y-2">
+          <div className="pt-4 space-y-2 bg-white">
+            {/* Mobile Navigation Links */}
             {navItems.map(({ path, icon: Icon, label }) => (
               <Link
                 key={path}
@@ -144,9 +145,22 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
             
-            {/* Mobile Profile Section */}
+            {/* Mobile Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200 w-full"
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+              <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+            
+            {/* Mobile Profile Section - Contained within navbar */}
             <div className="pt-4 mt-4 border-t border-gray-100">
-              <div className="flex items-center space-x-3 px-4 py-3">
+              <div className="flex items-center space-x-3 px-4 py-3 bg-gray-50 rounded-xl">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
                   A
                 </div>
@@ -155,15 +169,32 @@ const Navbar: React.FC = () => {
                   <div className="text-xs text-gray-500">admin@library.com</div>
                 </div>
               </div>
-              <div className="px-4 space-y-1">
-                <a href="#" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                  Profile Settings
+              
+              {/* Mobile Profile Actions - All contained within the dropdown */}
+              <div className="mt-2 space-y-1">
+                <a 
+                  href="#" 
+                  className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  <User className="h-5 w-5" />
+                  <span>Profile Settings</span>
                 </a>
-                <a href="#" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                  Preferences
+                <a 
+                  href="#" 
+                  className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  <span className="h-5 w-5 flex items-center justify-center">⚙️</span>
+                  <span>Preferences</span>
                 </a>
-                <a href="#" className="block px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                  Sign Out
+                <a 
+                  href="#" 
+                  className="flex items-center space-x-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  <span className="h-5 w-5 flex items-center justify-center">🚪</span>
+                  <span>Sign Out</span>
                 </a>
               </div>
             </div>
