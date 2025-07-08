@@ -1,5 +1,6 @@
 import React from 'react';
 import { BookOpen, Users, ArrowLeftRight, TrendingUp, Calendar, AlertTriangle } from 'lucide-react';
+import { useLibrary } from '../../context/LibraryContext';
 import { useBooks } from '../../hooks/useBooks';
 import { useMembers } from '../../hooks/useMembers';
 import { useTransactions } from '../../hooks/useTransactions';
@@ -9,6 +10,7 @@ import BookStatusChart from './BookStatusChart';
 import WeeklyIssuesChart from './WeeklyIssuesChart';
 
 const Dashboard: React.FC = () => {
+  const { loading } = useLibrary();
   const { books } = useBooks();
   const { members } = useMembers();
   const { transactions } = useTransactions();
