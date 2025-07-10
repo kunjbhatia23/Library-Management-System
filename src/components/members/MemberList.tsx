@@ -6,10 +6,11 @@ import MemberForm from './MemberForm';
 import Modal from '../common/Modal';
 import SearchFilter from '../common/SearchFilter';
 import LoadingSpinner from '../common/LoadingSpinner';
+import ErrorMessage from '../common/ErrorMessage';
 import { useMembers } from '../../hooks/useMembers';
 
 const MemberList: React.FC = () => {
-  const { members, loading, addMember, updateMember, deleteMember } = useMembers();
+  const { members, loading, error, addMember, updateMember, deleteMember, loadMembers } = useMembers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -78,6 +79,10 @@ const MemberList: React.FC = () => {
 
   if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} onRetry={loadMembers} />;
   }
 
   return (

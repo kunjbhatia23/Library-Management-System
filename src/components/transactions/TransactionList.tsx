@@ -5,10 +5,11 @@ import IssueBookForm from './IssueBookForm';
 import Modal from '../common/Modal';
 import SearchFilter from '../common/SearchFilter';
 import LoadingSpinner from '../common/LoadingSpinner';
+import ErrorMessage from '../common/ErrorMessage';
 import { useTransactions } from '../../hooks/useTransactions';
 
 const TransactionList: React.FC = () => {
-  const { transactions, loading, issueBook, returnBook } = useTransactions();
+  const { transactions, loading, error, issueBook, returnBook, loadTransactions } = useTransactions();
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -75,6 +76,10 @@ const TransactionList: React.FC = () => {
 
   if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} onRetry={loadTransactions} />;
   }
 
   return (

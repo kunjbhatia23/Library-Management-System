@@ -98,7 +98,9 @@ const BookForm: React.FC<BookFormProps> = ({ book, onSubmit, onCancel, isLoading
         <input
           id="isbn"
           {...register('isbn')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.isbn ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter ISBN"
         />
         {errors.isbn && <p className="text-red-500 text-sm mt-1">{errors.isbn.message}</p>}
@@ -112,7 +114,9 @@ const BookForm: React.FC<BookFormProps> = ({ book, onSubmit, onCancel, isLoading
           id="publishedDate"
           type="date"
           {...register('publishedDate')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.publishedDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
         />
         {errors.publishedDate && <p className="text-red-500 text-sm mt-1">{errors.publishedDate.message}</p>}
       </div>
@@ -126,7 +130,9 @@ const BookForm: React.FC<BookFormProps> = ({ book, onSubmit, onCancel, isLoading
           type="number"
           min="1"
           {...register('totalCopies')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.totalCopies ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter total copies"
         />
         {errors.totalCopies && <p className="text-red-500 text-sm mt-1">{errors.totalCopies.message}</p>}
@@ -140,7 +146,9 @@ const BookForm: React.FC<BookFormProps> = ({ book, onSubmit, onCancel, isLoading
           id="description"
           {...register('description')}
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter book description"
         />
         {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}

@@ -46,7 +46,9 @@ const MemberForm: React.FC<MemberFormProps> = ({ member, onSubmit, onCancel, isL
         <input
           id="name"
           {...register('name')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter full name"
         />
         {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
@@ -60,7 +62,9 @@ const MemberForm: React.FC<MemberFormProps> = ({ member, onSubmit, onCancel, isL
           id="email"
           type="email"
           {...register('email')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter email address"
         />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
@@ -74,7 +78,9 @@ const MemberForm: React.FC<MemberFormProps> = ({ member, onSubmit, onCancel, isL
           id="phone"
           type="tel"
           {...register('phone')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter phone number"
         />
         {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
@@ -88,7 +94,9 @@ const MemberForm: React.FC<MemberFormProps> = ({ member, onSubmit, onCancel, isL
           id="address"
           {...register('address')}
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter full address"
         />
         {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
@@ -101,7 +109,9 @@ const MemberForm: React.FC<MemberFormProps> = ({ member, onSubmit, onCancel, isL
         <select
           id="membershipType"
           {...register('membershipType')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.membershipType ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
         >
           <option value="standard">Standard</option>
           <option value="premium">Premium</option>

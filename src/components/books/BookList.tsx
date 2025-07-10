@@ -6,10 +6,11 @@ import BookForm from './BookForm';
 import Modal from '../common/Modal';
 import SearchFilter from '../common/SearchFilter';
 import LoadingSpinner from '../common/LoadingSpinner';
+import ErrorMessage from '../common/ErrorMessage';
 import { useBooks } from '../../hooks/useBooks';
 
 const BookList: React.FC = () => {
-  const { books, loading, addBook, updateBook, deleteBook } = useBooks();
+  const { books, loading, error, addBook, updateBook, deleteBook, loadBooks } = useBooks();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -66,6 +67,10 @@ const BookList: React.FC = () => {
 
   if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} onRetry={loadBooks} />;
   }
 
   return (

@@ -49,7 +49,9 @@ const IssueBookForm: React.FC<IssueBookFormProps> = ({ onSubmit, onCancel, isLoa
         <select
           id="bookId"
           {...register('bookId')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.bookId ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
         >
           <option value="">Choose a book...</option>
           {availableBooks.map((book) => (
@@ -68,7 +70,9 @@ const IssueBookForm: React.FC<IssueBookFormProps> = ({ onSubmit, onCancel, isLoa
         <select
           id="memberId"
           {...register('memberId')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.memberId ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
         >
           <option value="">Choose a member...</option>
           {activeMembers.map((member) => (

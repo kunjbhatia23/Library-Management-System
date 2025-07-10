@@ -13,10 +13,13 @@ export const useBooks = () => {
   const loadBooks = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       const books = await bookAPI.getAll();
       dispatch({ type: 'SET_BOOKS', payload: books });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load books' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load books';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error loading books:', error);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -25,11 +28,14 @@ export const useBooks = () => {
   const addBook = async (data: BookFormData) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       const newBook = await bookAPI.create(data);
       dispatch({ type: 'ADD_BOOK', payload: newBook });
       return newBook;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to add book' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add book';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error adding book:', error);
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -39,11 +45,14 @@ export const useBooks = () => {
   const updateBook = async (id: string, data: Partial<BookFormData>) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       const updatedBook = await bookAPI.update(id, data);
       dispatch({ type: 'UPDATE_BOOK', payload: updatedBook });
       return updatedBook;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to update book' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update book';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error updating book:', error);
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -53,10 +62,13 @@ export const useBooks = () => {
   const deleteBook = async (id: string) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       await bookAPI.delete(id);
       dispatch({ type: 'DELETE_BOOK', payload: id });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete book' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete book';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error deleting book:', error);
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });

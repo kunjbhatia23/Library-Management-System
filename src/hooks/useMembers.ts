@@ -13,10 +13,13 @@ export const useMembers = () => {
   const loadMembers = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       const members = await memberAPI.getAll();
       dispatch({ type: 'SET_MEMBERS', payload: members });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load members' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load members';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error loading members:', error);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -25,11 +28,14 @@ export const useMembers = () => {
   const addMember = async (data: MemberFormData) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       const newMember = await memberAPI.create(data);
       dispatch({ type: 'ADD_MEMBER', payload: newMember });
       return newMember;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to add member' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add member';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error adding member:', error);
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -39,11 +45,14 @@ export const useMembers = () => {
   const updateMember = async (id: string, data: Partial<MemberFormData>) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       const updatedMember = await memberAPI.update(id, data);
       dispatch({ type: 'UPDATE_MEMBER', payload: updatedMember });
       return updatedMember;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to update member' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update member';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error updating member:', error);
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -53,10 +62,13 @@ export const useMembers = () => {
   const deleteMember = async (id: string) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       await memberAPI.delete(id);
       dispatch({ type: 'DELETE_MEMBER', payload: id });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete member' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete member';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      console.error('Error deleting member:', error);
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });

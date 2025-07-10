@@ -1,4 +1,34 @@
 import { Book, Member, Transaction, BookFormData, MemberFormData } from '../types';
+import axios from 'axios';
+
+// Create axios instance with base URL from environment
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor for logging
+api.interceptors.request.use(
+  (config) => {
+    console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
 // Mock data
 const mockBooks: Book[] = [
@@ -126,129 +156,207 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // Book API
 export const bookAPI = {
   getAll: async (): Promise<Book[]> => {
-    await delay(500);
-    return mockBooks;
+    try {
+      // Try to fetch from real API first
+      const response = await api.get('/books');
+      return response.data;
+    } catch (error) {
+      // Fallback to mock data if API is not available
+      console.warn('API not available, using mock data');
+      await delay(500);
+      return mockBooks;
+    }
   },
   
   getById: async (id: string): Promise<Book | null> => {
-    await delay(300);
-    return mockBooks.find(book => book.id === id) || null;
+    try {
+      const response = await api.get(`/books/${id}`);
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(300);
+      return mockBooks.find(book => book.id === id) || null;
+    }
   },
   
   create: async (data: BookFormData): Promise<Book> => {
-    await delay(500);
-    const newBook: Book = {
-      id: Date.now().toString(),
-      ...data,
-      availableCopies: data.totalCopies,
-      coverUrl: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400'
-    };
-    mockBooks.push(newBook);
-    return newBook;
+    try {
+      const response = await api.post('/books', data);
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const newBook: Book = {
+        id: Date.now().toString(),
+        ...data,
+        availableCopies: data.totalCopies,
+        coverUrl: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400'
+      };
+      mockBooks.push(newBook);
+      return newBook;
+    }
   },
   
   update: async (id: string, data: Partial<BookFormData>): Promise<Book> => {
-    await delay(500);
-    const index = mockBooks.findIndex(book => book.id === id);
-    if (index === -1) throw new Error('Book not found');
-    
-    mockBooks[index] = { ...mockBooks[index], ...data };
-    return mockBooks[index];
+    try {
+      const response = await api.put(`/books/${id}`, data);
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const index = mockBooks.findIndex(book => book.id === id);
+      if (index === -1) throw new Error('Book not found');
+      
+      mockBooks[index] = { ...mockBooks[index], ...data };
+      return mockBooks[index];
+    }
   },
   
   delete: async (id: string): Promise<void> => {
-    await delay(500);
-    const index = mockBooks.findIndex(book => book.id === id);
-    if (index === -1) throw new Error('Book not found');
-    
-    mockBooks.splice(index, 1);
+    try {
+      await api.delete(`/books/${id}`);
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const index = mockBooks.findIndex(book => book.id === id);
+      if (index === -1) throw new Error('Book not found');
+      
+      mockBooks.splice(index, 1);
+    }
   }
 };
 
 // Member API
 export const memberAPI = {
   getAll: async (): Promise<Member[]> => {
-    await delay(500);
-    return mockMembers;
+    try {
+      const response = await api.get('/members');
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      return mockMembers;
+    }
   },
   
   getById: async (id: string): Promise<Member | null> => {
-    await delay(300);
-    return mockMembers.find(member => member.id === id) || null;
+    try {
+      const response = await api.get(`/members/${id}`);
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(300);
+      return mockMembers.find(member => member.id === id) || null;
+    }
   },
   
   create: async (data: MemberFormData): Promise<Member> => {
-    await delay(500);
-    const newMember: Member = {
-      id: Date.now().toString(),
-      ...data,
-      membershipDate: new Date().toISOString().split('T')[0],
-      isActive: true
-    };
-    mockMembers.push(newMember);
-    return newMember;
+    try {
+      const response = await api.post('/members', data);
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const newMember: Member = {
+        id: Date.now().toString(),
+        ...data,
+        membershipDate: new Date().toISOString().split('T')[0],
+        isActive: true
+      };
+      mockMembers.push(newMember);
+      return newMember;
+    }
   },
   
   update: async (id: string, data: Partial<Member>): Promise<Member> => {
-    await delay(500);
-    const index = mockMembers.findIndex(member => member.id === id);
-    if (index === -1) throw new Error('Member not found');
-    
-    mockMembers[index] = { ...mockMembers[index], ...data };
-    return mockMembers[index];
+    try {
+      const response = await api.put(`/members/${id}`, data);
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const index = mockMembers.findIndex(member => member.id === id);
+      if (index === -1) throw new Error('Member not found');
+      
+      mockMembers[index] = { ...mockMembers[index], ...data };
+      return mockMembers[index];
+    }
   },
   
   delete: async (id: string): Promise<void> => {
-    await delay(500);
-    const index = mockMembers.findIndex(member => member.id === id);
-    if (index === -1) throw new Error('Member not found');
-    
-    mockMembers.splice(index, 1);
+    try {
+      await api.delete(`/members/${id}`);
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const index = mockMembers.findIndex(member => member.id === id);
+      if (index === -1) throw new Error('Member not found');
+      
+      mockMembers.splice(index, 1);
+    }
   }
 };
 
 // Transaction API
 export const transactionAPI = {
   getAll: async (): Promise<Transaction[]> => {
-    await delay(500);
-    return mockTransactions;
+    try {
+      const response = await api.get('/transactions');
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      return mockTransactions;
+    }
   },
   
   issueBook: async (bookId: string, memberId: string): Promise<Transaction> => {
-    await delay(500);
-    const book = mockBooks.find(b => b.id === bookId);
-    const member = mockMembers.find(m => m.id === memberId);
-    
-    if (!book || !member) throw new Error('Book or Member not found');
-    if (book.availableCopies <= 0) throw new Error('No copies available');
-    
-    const transaction: Transaction = {
-      id: Date.now().toString(),
-      bookId,
-      memberId,
-      bookTitle: book.title,
-      memberName: member.name,
-      issueDate: new Date().toISOString().split('T')[0],
-      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      status: 'issued'
-    };
-    
-    book.availableCopies--;
-    mockTransactions.push(transaction);
-    return transaction;
+    try {
+      const response = await api.post('/transactions/issue', { bookId, memberId });
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const book = mockBooks.find(b => b.id === bookId);
+      const member = mockMembers.find(m => m.id === memberId);
+      
+      if (!book || !member) throw new Error('Book or Member not found');
+      if (book.availableCopies <= 0) throw new Error('No copies available');
+      
+      const transaction: Transaction = {
+        id: Date.now().toString(),
+        bookId,
+        memberId,
+        bookTitle: book.title,
+        memberName: member.name,
+        issueDate: new Date().toISOString().split('T')[0],
+        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        status: 'issued'
+      };
+      
+      book.availableCopies--;
+      mockTransactions.push(transaction);
+      return transaction;
+    }
   },
   
   returnBook: async (transactionId: string): Promise<Transaction> => {
-    await delay(500);
-    const transaction = mockTransactions.find(t => t.id === transactionId);
-    if (!transaction) throw new Error('Transaction not found');
-    
-    const book = mockBooks.find(b => b.id === transaction.bookId);
-    if (book) book.availableCopies++;
-    
-    transaction.returnDate = new Date().toISOString().split('T')[0];
-    transaction.status = 'returned';
-    
-    return transaction;
+    try {
+      const response = await api.put(`/transactions/${transactionId}/return`);
+      return response.data;
+    } catch (error) {
+      console.warn('API not available, using mock data');
+      await delay(500);
+      const transaction = mockTransactions.find(t => t.id === transactionId);
+      if (!transaction) throw new Error('Transaction not found');
+      
+      const book = mockBooks.find(b => b.id === transaction.bookId);
+      if (book) book.availableCopies++;
+      
+      transaction.returnDate = new Date().toISOString().split('T')[0];
+      transaction.status = 'returned';
+      
+      return transaction;
+    }
   }
 };
