@@ -36,6 +36,7 @@ const TransactionList: React.FC = () => {
       setIsIssueModalOpen(false);
     } catch (error) {
       console.error('Error issuing book:', error);
+      // Keep modal open on error so user can retry
     }
   };
 

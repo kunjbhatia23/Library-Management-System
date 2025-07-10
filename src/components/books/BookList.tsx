@@ -52,6 +52,7 @@ const BookList: React.FC = () => {
       setEditingBook(null);
     } catch (error) {
       console.error('Error saving book:', error);
+      // Keep modal open on error so user can retry
     }
   };
 

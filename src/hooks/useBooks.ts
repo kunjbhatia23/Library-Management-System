@@ -27,54 +27,45 @@ export const useBooks = () => {
 
   const addBook = async (data: BookFormData) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const newBook = await bookAPI.create(data);
-      // Refresh the entire list to avoid duplicates
-      await loadBooks();
+      // Add the new book to the existing list
+      dispatch({ type: 'ADD_BOOK', payload: newBook });
       return newBook;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to add book';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       console.error('Error adding book:', error);
       throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
   const updateBook = async (id: string, data: Partial<BookFormData>) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const updatedBook = await bookAPI.update(id, data);
-      // Refresh the entire list to ensure consistency
-      await loadBooks();
+      // Update the book in the existing list
+      dispatch({ type: 'UPDATE_BOOK', payload: updatedBook });
       return updatedBook;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update book';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       console.error('Error updating book:', error);
       throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
   const deleteBook = async (id: string) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       await bookAPI.delete(id);
-      // Refresh the entire list to ensure consistency
-      await loadBooks();
+      // Remove the book from the existing list
+      dispatch({ type: 'DELETE_BOOK', payload: id });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete book';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       console.error('Error deleting book:', error);
       throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 

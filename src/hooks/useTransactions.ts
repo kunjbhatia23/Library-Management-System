@@ -26,37 +26,31 @@ export const useTransactions = () => {
 
   const issueBook = async (bookId: string, memberId: string) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const transaction = await transactionAPI.issueBook(bookId, memberId);
-      // Refresh the entire list to avoid duplicates and ensure book availability is updated
-      await loadTransactions();
+      // Add the new transaction to the existing list
+      dispatch({ type: 'ADD_TRANSACTION', payload: transaction });
       return transaction;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to issue book';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       console.error('Error issuing book:', error);
       throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
   const returnBook = async (transactionId: string) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const transaction = await transactionAPI.returnBook(transactionId);
-      // Refresh the entire list to ensure consistency
-      await loadTransactions();
+      // Update the transaction in the existing list
+      dispatch({ type: 'UPDATE_TRANSACTION', payload: transaction });
       return transaction;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to return book';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       console.error('Error returning book:', error);
       throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 

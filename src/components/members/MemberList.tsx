@@ -53,6 +53,7 @@ const MemberList: React.FC = () => {
       setEditingMember(null);
     } catch (error) {
       console.error('Error saving member:', error);
+      // Keep modal open on error so user can retry
     }
   };
 
