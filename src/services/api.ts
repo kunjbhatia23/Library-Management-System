@@ -25,7 +25,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    // Only log server response errors, not network errors
+    // Network errors are handled gracefully by individual API calls with mock data fallback
+    if (error.response) {
+      console.error('API Error:', error.response.data || error.message);
+    }
     return Promise.reject(error);
   }
 );
