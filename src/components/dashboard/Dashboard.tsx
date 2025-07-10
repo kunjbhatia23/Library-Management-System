@@ -8,6 +8,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import CounterCard from './CounterCard';
 import BookStatusChart from './BookStatusChart';
 import WeeklyIssuesChart from './WeeklyIssuesChart';
+import { formatDate } from '../../utils/dateUtils';
 
 const Dashboard: React.FC = () => {
   const { loading } = useLibrary();
@@ -112,7 +113,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-xs text-gray-600 mt-1">{transaction.memberName}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-gray-500 mb-1">{new Date(transaction.issueDate).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500 mb-1">{formatDate(transaction.issueDate)}</p>
                   <span className={`inline-block px-2 py-1 rounded-full text-xs ${
                     transaction.status === 'issued' ? 'bg-blue-100 text-blue-800' :
                     transaction.status === 'returned' ? 'bg-green-100 text-green-800' :

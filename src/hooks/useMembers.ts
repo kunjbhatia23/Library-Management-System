@@ -30,7 +30,8 @@ export const useMembers = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const newMember = await memberAPI.create(data);
-      dispatch({ type: 'ADD_MEMBER', payload: newMember });
+      // Refresh the entire list to avoid duplicates
+      await loadMembers();
       return newMember;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to add member';
@@ -47,7 +48,8 @@ export const useMembers = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const updatedMember = await memberAPI.update(id, data);
-      dispatch({ type: 'UPDATE_MEMBER', payload: updatedMember });
+      // Refresh the entire list to ensure consistency
+      await loadMembers();
       return updatedMember;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update member';
@@ -64,7 +66,8 @@ export const useMembers = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       await memberAPI.delete(id);
-      dispatch({ type: 'DELETE_MEMBER', payload: id });
+      // Refresh the entire list to ensure consistency
+      await loadMembers();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete member';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });

@@ -53,7 +53,9 @@ const BookForm: React.FC<BookFormProps> = ({ book, onSubmit, onCancel, isLoading
         <input
           id="title"
           {...register('title')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.title ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter book title"
         />
         {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
@@ -66,7 +68,9 @@ const BookForm: React.FC<BookFormProps> = ({ book, onSubmit, onCancel, isLoading
         <input
           id="author"
           {...register('author')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.author ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
           placeholder="Enter author name"
         />
         {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author.message}</p>}
@@ -79,7 +83,9 @@ const BookForm: React.FC<BookFormProps> = ({ book, onSubmit, onCancel, isLoading
         <select
           id="genre"
           {...register('genre')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.genre ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
         >
           <option value="">Select genre</option>
           {genres.map((genre) => (

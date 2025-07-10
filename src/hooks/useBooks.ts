@@ -30,7 +30,8 @@ export const useBooks = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const newBook = await bookAPI.create(data);
-      dispatch({ type: 'ADD_BOOK', payload: newBook });
+      // Refresh the entire list to avoid duplicates
+      await loadBooks();
       return newBook;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to add book';
@@ -47,7 +48,8 @@ export const useBooks = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const updatedBook = await bookAPI.update(id, data);
-      dispatch({ type: 'UPDATE_BOOK', payload: updatedBook });
+      // Refresh the entire list to ensure consistency
+      await loadBooks();
       return updatedBook;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update book';
@@ -64,7 +66,8 @@ export const useBooks = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       await bookAPI.delete(id);
-      dispatch({ type: 'DELETE_BOOK', payload: id });
+      // Refresh the entire list to ensure consistency
+      await loadBooks();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete book';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });

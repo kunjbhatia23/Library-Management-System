@@ -1,6 +1,7 @@
 import React from 'react';
 import { Book } from '../../types';
 import { Edit, Trash2, BookOpen } from 'lucide-react';
+import { formatDate } from '../../utils/dateUtils';
 
 interface BookCardProps {
   book: Book;
@@ -43,7 +44,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit, onDelete }) => {
         
         <div className="flex justify-between items-center">
           <div className="text-xs text-gray-500">
-            Published: {new Date(book.publishedDate).toLocaleDateString()}
+            Published: {formatDate(book.publishedDate)}
           </div>
           <div className="flex space-x-2">
             <button

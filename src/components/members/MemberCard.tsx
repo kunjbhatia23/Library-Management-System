@@ -1,6 +1,7 @@
 import React from 'react';
 import { Member } from '../../types';
 import { Edit, Trash2, Mail, Phone, MapPin, Calendar } from 'lucide-react';
+import { formatDate } from '../../utils/dateUtils';
 
 interface MemberCardProps {
   member: Member;
@@ -59,7 +60,7 @@ const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit, onDelete, onTog
         </div>
         <div className="flex items-center text-sm text-gray-600">
           <Calendar className="h-4 w-4 mr-2" />
-          <span>Member since {new Date(member.membershipDate).toLocaleDateString()}</span>
+          <span>Member since {formatDate(member.membershipDate)}</span>
         </div>
       </div>
 

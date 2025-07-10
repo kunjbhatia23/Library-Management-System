@@ -29,7 +29,8 @@ export const useTransactions = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const transaction = await transactionAPI.issueBook(bookId, memberId);
-      dispatch({ type: 'ADD_TRANSACTION', payload: transaction });
+      // Refresh the entire list to avoid duplicates and ensure book availability is updated
+      await loadTransactions();
       return transaction;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to issue book';
@@ -46,7 +47,8 @@ export const useTransactions = () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       const transaction = await transactionAPI.returnBook(transactionId);
-      dispatch({ type: 'UPDATE_TRANSACTION', payload: transaction });
+      // Refresh the entire list to ensure consistency
+      await loadTransactions();
       return transaction;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to return book';

@@ -7,6 +7,7 @@ import SearchFilter from '../common/SearchFilter';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorMessage from '../common/ErrorMessage';
 import { useTransactions } from '../../hooks/useTransactions';
+import { formatDate } from '../../utils/dateUtils';
 
 const TransactionList: React.FC = () => {
   const { transactions, loading, error, issueBook, returnBook, loadTransactions } = useTransactions();
@@ -142,13 +143,13 @@ const TransactionList: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(transaction.issueDate).toLocaleDateString()}
+                    {formatDate(transaction.issueDate)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(transaction.dueDate).toLocaleDateString()}
+                    {formatDate(transaction.dueDate)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {transaction.returnDate ? new Date(transaction.returnDate).toLocaleDateString() : '-'}
+                    {transaction.returnDate ? formatDate(transaction.returnDate) : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
