@@ -89,9 +89,9 @@ const mockBooks: Book[] = [
 const mockMembers: Member[] = [
   {
     id: '1',
-    name: 'John Doe',
-    email: 'john.doe@email.com',
-    phone: '+1-555-0123',
+    name: 'Kartik Singh',
+    email: 'kartik.singh@gmail.com',
+    phone: '+91-555-0123-898',
     address: '123 Main St, City, State 12345',
     membershipDate: '2023-01-15',
     isActive: true,
@@ -99,20 +99,20 @@ const mockMembers: Member[] = [
   },
   {
     id: '2',
-    name: 'Jane Smith',
-    email: 'jane.smith@email.com',
-    phone: '+1-555-0456',
-    address: '456 Oak Ave, City, State 12345',
+    name: 'Ria Gupta',
+    email: 'riagupta@gmail.com',
+    phone: '+91-555-0456-095',
+    address: '456 Shankar Road, City, State 12345',
     membershipDate: '2023-03-20',
     isActive: true,
     membershipType: 'premium'
   },
   {
     id: '3',
-    name: 'Bob Johnson',
-    email: 'bob.johnson@email.com',
-    phone: '+1-555-0789',
-    address: '789 Pine Rd, City, State 12345',
+    name: 'Ashok Koul',
+    email: 'ashokkoul@gmail.com',
+    phone: '+91-555-0789-554',
+    address: '789 Nagar Nivas, City, State 12345',
     membershipDate: '2023-06-10',
     isActive: false,
     membershipType: 'student'
