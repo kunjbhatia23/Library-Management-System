@@ -1,15 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useLibrary } from '../context/LibraryContext';
 import { transactionAPI } from '../services/api';
 
 export const useTransactions = () => {
   const { state, dispatch } = useLibrary();
 
-  useEffect(() => {
-    loadTransactions();
-  }, []);
+  // Memoize transactions to prevent unnecessary re-renders
+  const transactions = useMemo(() => state.transactions, [state.transactions]);
+  const loading = useMemo(() => state.loading, [state.loading]);
+  const error = useMemo(() => state.error, [state.error]);
 
-  const loadTransactions = async () => {
+  // Memoize loadTransactions function to prevent unnecessary re-renders
+  const loadTransactions = useCallback(async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
@@ -22,9 +24,19 @@ export const useTransactions = () => {
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  };
+  }, [dispatch]);
 
-  const issueBook = async (bookId: string, memberId: string) => {
+  useEffect(() => {
+    // Only load if transactions array is empty to prevent unnecessary API calls
+    if (transactions.length === 0 && !loading && !error) {
+      loadTransactions();
+    }
+  }, [transactions.length, loading, error, loadTransactions]);
+    loadTransactions();
+  }, []);
+
+
+  const issueBook = useCallback(async (bookId: string, memberId: string) => {
     try {
       dispatch({ type: 'SET_ERROR', payload: null });
       const transaction = await transactionAPI.issueBook(bookId, memberId);
@@ -37,9 +49,9 @@ export const useTransactions = () => {
       console.error('Error issuing book:', error);
       throw error;
     }
-  };
+  }, [dispatch]);
 
-  const returnBook = async (transactionId: string) => {
+  const returnBook = useCallback(async (transactionId: string) => {
     try {
       dispatch({ type: 'SET_ERROR', payload: null });
       const transaction = await transactionAPI.returnBook(transactionId);
@@ -52,12 +64,12 @@ export const useTransactions = () => {
       console.error('Error returning book:', error);
       throw error;
     }
-  };
+  }, [dispatch]);
 
   return {
-    transactions: state.transactions,
-    loading: state.loading,
-    error: state.error,
+    transactions,
+    loading,
+    error,
     loadTransactions,
     issueBook,
     returnBook,

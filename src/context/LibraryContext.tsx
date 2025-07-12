@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useMemo } from 'react';
 import { Book, Member, Transaction } from '../types';
 
 interface LibraryState {
@@ -94,8 +94,14 @@ const LibraryContext = createContext<{
 export const LibraryProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(libraryReducer, initialState);
 
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    state,
+    dispatch
+  }), [state, dispatch]);
+
   return (
-    <LibraryContext.Provider value={{ state, dispatch }}>
+    <LibraryContext.Provider value={contextValue}>
       {children}
     </LibraryContext.Provider>
   );

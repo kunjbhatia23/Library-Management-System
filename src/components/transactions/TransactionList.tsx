@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Plus, BookOpen, RotateCcw, AlertCircle } from 'lucide-react';
 import { Transaction } from '../../types';
 import IssueBookForm from './IssueBookForm';
@@ -8,12 +8,16 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorMessage from '../common/ErrorMessage';
 import { useTransactions } from '../../hooks/useTransactions';
 import { formatDate } from '../../utils/dateUtils';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const TransactionList: React.FC = () => {
   const { transactions, loading, error, issueBook, returnBook, loadTransactions } = useTransactions();
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
+
+  // Debounce search term to optimize performance
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const statusOptions = [
     { value: 'issued', label: 'Issued' },
@@ -23,14 +27,14 @@ const TransactionList: React.FC = () => {
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(transaction => {
-      const matchesSearch = transaction.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          transaction.memberName.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = transaction.bookTitle.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          transaction.memberName.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
       const matchesStatus = !selectedStatus || transaction.status === selectedStatus;
       return matchesSearch && matchesStatus;
     });
-  }, [transactions, searchTerm, selectedStatus]);
+  }, [transactions, debouncedSearchTerm, selectedStatus]);
 
-  const handleIssueBook = async (bookId: string, memberId: string) => {
+  const handleIssueBook = useCallback(async (bookId: string, memberId: string) => {
     try {
       await issueBook(bookId, memberId);
       setIsIssueModalOpen(false);
@@ -38,9 +42,9 @@ const TransactionList: React.FC = () => {
       console.error('Error issuing book:', error);
       // Keep modal open on error so user can retry
     }
-  };
+  }, [issueBook]);
 
-  const handleReturnBook = async (transactionId: string) => {
+  const handleReturnBook = useCallback(async (transactionId: string) => {
     if (window.confirm('Are you sure you want to return this book?')) {
       try {
         await returnBook(transactionId);
@@ -48,9 +52,9 @@ const TransactionList: React.FC = () => {
         console.error('Error returning book:', error);
       }
     }
-  };
+  }, [returnBook]);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = useCallback((status: string) => {
     switch (status) {
       case 'issued':
         return 'bg-blue-100 text-blue-800';
@@ -61,9 +65,9 @@ const TransactionList: React.FC = () => {
       default:
         return 'bg-gray-100 text-gray-800';
     }
-  };
+  }, []);
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = useCallback((status: string) => {
     switch (status) {
       case 'issued':
         return <BookOpen className="h-4 w-4" />;
@@ -74,7 +78,7 @@ const TransactionList: React.FC = () => {
       default:
         return <BookOpen className="h-4 w-4" />;
     }
-  };
+  }, []);
 
   if (loading) {
     return <LoadingSpinner />;

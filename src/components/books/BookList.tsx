@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Plus } from 'lucide-react';
 import { Book } from '../../types';
 import BookCard from './BookCard';
@@ -8,6 +8,7 @@ import SearchFilter from '../common/SearchFilter';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorMessage from '../common/ErrorMessage';
 import { useBooks } from '../../hooks/useBooks';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const BookList: React.FC = () => {
   const { books, loading, error, addBook, updateBook, deleteBook, loadBooks } = useBooks();
@@ -16,6 +17,9 @@ const BookList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
 
+  // Debounce search term to optimize performance
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
   const genres = useMemo(() => {
     const uniqueGenres = [...new Set(books.map(book => book.genre))];
     return uniqueGenres.map(genre => ({ value: genre, label: genre }));
@@ -23,25 +27,25 @@ const BookList: React.FC = () => {
 
   const filteredBooks = useMemo(() => {
     return books.filter(book => {
-      const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          book.isbn.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = book.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          book.author.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          book.isbn.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
       const matchesGenre = !selectedGenre || book.genre === selectedGenre;
       return matchesSearch && matchesGenre;
     });
-  }, [books, searchTerm, selectedGenre]);
+  }, [books, debouncedSearchTerm, selectedGenre]);
 
-  const handleAddBook = () => {
+  const handleAddBook = useCallback(() => {
     setEditingBook(null);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditBook = (book: Book) => {
+  const handleEditBook = useCallback((book: Book) => {
     setEditingBook(book);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = useCallback(async (data: any) => {
     try {
       if (editingBook) {
         await updateBook(editingBook.id, data);
@@ -54,9 +58,9 @@ const BookList: React.FC = () => {
       console.error('Error saving book:', error);
       // Keep modal open on error so user can retry
     }
-  };
+  }, [editingBook, updateBook, addBook]);
 
-  const handleDeleteBook = async (id: string) => {
+  const handleDeleteBook = useCallback(async (id: string) => {
     if (window.confirm('Are you sure you want to delete this book?')) {
       try {
         await deleteBook(id);
@@ -64,7 +68,7 @@ const BookList: React.FC = () => {
         console.error('Error deleting book:', error);
       }
     }
-  };
+  }, [deleteBook]);
 
   if (loading) {
     return <LoadingSpinner />;

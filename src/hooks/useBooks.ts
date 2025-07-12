@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useLibrary } from '../context/LibraryContext';
 import { bookAPI } from '../services/api';
 import { BookFormData } from '../types';
@@ -6,11 +6,13 @@ import { BookFormData } from '../types';
 export const useBooks = () => {
   const { state, dispatch } = useLibrary();
 
-  useEffect(() => {
-    loadBooks();
-  }, []);
+  // Memoize books to prevent unnecessary re-renders
+  const books = useMemo(() => state.books, [state.books]);
+  const loading = useMemo(() => state.loading, [state.loading]);
+  const error = useMemo(() => state.error, [state.error]);
 
-  const loadBooks = async () => {
+  // Memoize loadBooks function to prevent unnecessary re-renders
+  const loadBooks = useCallback(async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
@@ -23,9 +25,19 @@ export const useBooks = () => {
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  };
+  }, [dispatch]);
 
-  const addBook = async (data: BookFormData) => {
+  useEffect(() => {
+    // Only load if books array is empty to prevent unnecessary API calls
+    if (books.length === 0 && !loading && !error) {
+      loadBooks();
+    }
+  }, [books.length, loading, error, loadBooks]);
+    loadBooks();
+  }, []);
+
+
+  const addBook = useCallback(async (data: BookFormData) => {
     try {
       dispatch({ type: 'SET_ERROR', payload: null });
       const newBook = await bookAPI.create(data);
@@ -38,9 +50,9 @@ export const useBooks = () => {
       console.error('Error adding book:', error);
       throw error;
     }
-  };
+  }, [dispatch]);
 
-  const updateBook = async (id: string, data: Partial<BookFormData>) => {
+  const updateBook = useCallback(async (id: string, data: Partial<BookFormData>) => {
     try {
       dispatch({ type: 'SET_ERROR', payload: null });
       const updatedBook = await bookAPI.update(id, data);
@@ -53,9 +65,9 @@ export const useBooks = () => {
       console.error('Error updating book:', error);
       throw error;
     }
-  };
+  }, [dispatch]);
 
-  const deleteBook = async (id: string) => {
+  const deleteBook = useCallback(async (id: string) => {
     try {
       dispatch({ type: 'SET_ERROR', payload: null });
       await bookAPI.delete(id);
@@ -67,12 +79,12 @@ export const useBooks = () => {
       console.error('Error deleting book:', error);
       throw error;
     }
-  };
+  }, [dispatch]);
 
   return {
-    books: state.books,
-    loading: state.loading,
-    error: state.error,
+    books,
+    loading,
+    error,
     loadBooks,
     addBook,
     updateBook,

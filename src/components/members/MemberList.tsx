@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Plus } from 'lucide-react';
 import { Member } from '../../types';
 import MemberCard from './MemberCard';
@@ -8,6 +8,7 @@ import SearchFilter from '../common/SearchFilter';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorMessage from '../common/ErrorMessage';
 import { useMembers } from '../../hooks/useMembers';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const MemberList: React.FC = () => {
   const { members, loading, error, addMember, updateMember, deleteMember, loadMembers } = useMembers();
@@ -15,6 +16,9 @@ const MemberList: React.FC = () => {
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMembershipType, setSelectedMembershipType] = useState('');
+
+  // Debounce search term to optimize performance
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const membershipTypes = [
     { value: 'standard', label: 'Standard' },
@@ -24,25 +28,25 @@ const MemberList: React.FC = () => {
 
   const filteredMembers = useMemo(() => {
     return members.filter(member => {
-      const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          member.phone.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = member.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          member.email.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          member.phone.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
       const matchesType = !selectedMembershipType || member.membershipType === selectedMembershipType;
       return matchesSearch && matchesType;
     });
-  }, [members, searchTerm, selectedMembershipType]);
+  }, [members, debouncedSearchTerm, selectedMembershipType]);
 
-  const handleAddMember = () => {
+  const handleAddMember = useCallback(() => {
     setEditingMember(null);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditMember = (member: Member) => {
+  const handleEditMember = useCallback((member: Member) => {
     setEditingMember(member);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = useCallback(async (data: any) => {
     try {
       if (editingMember) {
         await updateMember(editingMember.id, data);
@@ -55,9 +59,9 @@ const MemberList: React.FC = () => {
       console.error('Error saving member:', error);
       // Keep modal open on error so user can retry
     }
-  };
+  }, [editingMember, updateMember, addMember]);
 
-  const handleDeleteMember = async (id: string) => {
+  const handleDeleteMember = useCallback(async (id: string) => {
     if (window.confirm('Are you sure you want to delete this member?')) {
       try {
         await deleteMember(id);
@@ -65,9 +69,9 @@ const MemberList: React.FC = () => {
         console.error('Error deleting member:', error);
       }
     }
-  };
+  }, [deleteMember]);
 
-  const handleToggleStatus = async (id: string) => {
+  const handleToggleStatus = useCallback(async (id: string) => {
     const member = members.find(m => m.id === id);
     if (member) {
       try {
@@ -76,7 +80,7 @@ const MemberList: React.FC = () => {
         console.error('Error updating member status:', error);
       }
     }
-  };
+  }, [members, updateMember]);
 
   if (loading) {
     return <LoadingSpinner />;
