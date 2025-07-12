@@ -33,6 +33,8 @@ export const useBooks = () => {
       loadBooks();
     }
   }, [books.length, loading, error, loadBooks]);
+
+  useEffect(() => {
     loadBooks();
   }, []);
 
