@@ -32,6 +32,8 @@ export const useTransactions = () => {
       loadTransactions();
     }
   }, [transactions.length, loading, error, loadTransactions]);
+
+  useEffect(() => {
     loadTransactions();
   }, []);
 
