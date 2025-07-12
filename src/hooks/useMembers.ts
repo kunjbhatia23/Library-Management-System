@@ -33,6 +33,8 @@ export const useMembers = () => {
       loadMembers();
     }
   }, [members.length, loading, error, loadMembers]);
+
+  useEffect(() => {
     loadMembers();
   }, []);
 
