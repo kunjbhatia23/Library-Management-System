@@ -169,7 +169,7 @@ const IssueBookForm: React.FC<IssueBookFormProps> = ({
         <h4 className="text-sm font-medium text-blue-800 mb-2">Issue Information</h4>
         <ul className="text-sm text-blue-700 space-y-1">
           <li>• Books are issued for 14 days</li>
-          <li>• Late returns incur a fine of $0.50 per day</li>
+          <li>• Late returns incur a fine of 50Rs per day</li>
           <li>• Members must be active to issue books</li>
           <li>• Available books: {availableBooks.length}</li>
           <li>• Active members: {activeMembers.length}</li>
