@@ -7,12 +7,17 @@ import SearchFilter from '../common/SearchFilter';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorMessage from '../common/ErrorMessage';
 import { useTransactions } from '../../hooks/useTransactions';
+import { useBooks } from '../../hooks/useBooks';
+import { useMembers } from '../../hooks/useMembers';
 import { formatDate } from '../../utils/dateUtils';
 import { useDebounce } from '../../hooks/useDebounce';
 
 const TransactionList: React.FC = () => {
   const { transactions, loading, error, issueBook, returnBook, loadTransactions } = useTransactions();
+  const { books, loading: booksLoading } = useBooks();
+  const { members, loading: membersLoading } = useMembers();
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
 
@@ -34,15 +39,26 @@ const TransactionList: React.FC = () => {
     });
   }, [transactions, debouncedSearchTerm, selectedStatus]);
 
+  const handleOpenIssueModal = useCallback(() => {
+    setIsIssueModalOpen(true);
+  }, []);
+
+  const handleCloseIssueModal = useCallback(() => {
+    setIsIssueModalOpen(false);
+    setIsSubmitting(false);
+  }, []);
+
   const handleIssueBook = useCallback(async (bookId: string, memberId: string) => {
     try {
+      setIsSubmitting(true);
       await issueBook(bookId, memberId);
-      setIsIssueModalOpen(false);
+      handleCloseIssueModal();
     } catch (error) {
       console.error('Error issuing book:', error);
+      setIsSubmitting(false);
       // Keep modal open on error so user can retry
     }
-  }, [issueBook]);
+  }, [issueBook, handleCloseIssueModal]);
 
   const handleReturnBook = useCallback(async (transactionId: string) => {
     if (window.confirm('Are you sure you want to return this book?')) {
@@ -93,11 +109,14 @@ const TransactionList: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Transaction Management</h1>
         <button
-          onClick={() => setIsIssueModalOpen(true)}
+          onClick={handleOpenIssueModal}
+          disabled={loading || booksLoading || membersLoading}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
         >
           <Plus className="h-4 w-4" />
-          <span>Issue Book</span>
+          <span>
+            {(booksLoading || membersLoading) ? 'Loading...' : 'Issue Book'}
+          </span>
         </button>
       </div>
 
@@ -190,15 +209,21 @@ const TransactionList: React.FC = () => {
 
       <Modal
         isOpen={isIssueModalOpen}
-        onClose={() => setIsIssueModalOpen(false)}
+        onClose={handleCloseIssueModal}
         title="Issue Book"
         size="lg"
       >
-        <IssueBookForm
-          onSubmit={handleIssueBook}
-          onCancel={() => setIsIssueModalOpen(false)}
-          isLoading={loading}
-        />
+        {isIssueModalOpen && (
+          <IssueBookForm
+            books={books}
+            members={members}
+            onSubmit={handleIssueBook}
+            onCancel={handleCloseIssueModal}
+            isLoading={isSubmitting}
+            booksLoading={booksLoading}
+            membersLoading={membersLoading}
+          />
+        )}
       </Modal>
     </div>
   );
